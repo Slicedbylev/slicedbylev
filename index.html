@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SlicedByLev — Premium Barbershop</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#C9A84C;--gold-light:#E8D5A3;--gold-dark:#8B6914;
+  --cream:#FAF7F2;--ink:#1A1714;--ink-soft:#3D3830;
+  --muted:#8A8278;--surface:#F2EDE4;--white:#FFFFFF;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;padding-bottom:70px;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;background:var(--ink);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(201,168,76,.12);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--gold);letter-spacing:.04em;text-decoration:none;}
+.logo span{color:var(--white);font-weight:300;}
+.nav-desktop{list-style:none;display:flex;gap:2rem;}
+.nav-desktop li a{color:#C8C2B8;text-decoration:none;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-desktop li a:hover,.nav-desktop li a.active{color:var(--gold);}
+.nav-book-btn{background:var(--gold);color:var(--ink);border:none;padding:.45rem 1.2rem;font-size:.8rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.nav-book-btn:hover{background:var(--gold-light);}
+
+/* MOBILE BOTTOM TAB BAR */
+.tab-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--ink);border-top:1px solid rgba(201,168,76,.15);z-index:200;padding:0;}
+.tab-bar-inner{display:flex;}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.7rem .5rem .5rem;cursor:pointer;border:none;background:none;color:#6A6058;font-family:'DM Sans',sans-serif;font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;transition:color .2s;gap:4px;}
+.tab-item svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.tab-item.active{color:var(--gold);}
+.tab-item.active svg{stroke:var(--gold);}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* HERO */
+.hero{background:var(--ink);padding:4rem 1.5rem 3.5rem;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center;}
+.hero-text h1{font-family:'Cormorant Garamond',serif;font-size:3.8rem;font-weight:300;color:var(--white);line-height:1.08;margin-bottom:1rem;}
+.hero-text h1 em{color:var(--gold);font-style:italic;}
+.hero-text p{color:#A09890;font-size:.95rem;line-height:1.75;margin-bottom:1.8rem;max-width:360px;}
+.btn-primary{background:var(--gold);color:var(--ink);border:none;padding:.85rem 1.8rem;font-size:.85rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-block;border-radius:0;}
+.btn-primary:hover{background:var(--gold-light);}
+.btn-primary:active{transform:scale(.97);}
+.rating-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.18);text-align:center;}
+.rating-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--gold);line-height:1;}
+.rating-stars{color:var(--gold);font-size:1.3rem;letter-spacing:4px;margin:.6rem 0 .4rem;}
+.rating-label{color:#A09890;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;}
+.rating-count{color:#5E5850;font-size:.73rem;margin-top:.3rem;}
+
+/* SECTIONS */
+.section{padding:3.5rem 1.5rem;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:400;margin-bottom:.4rem;}
+.section-sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem;line-height:1.6;}
+.gold-line{width:36px;height:1px;background:var(--gold);margin-bottom:1.3rem;}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:#D8D0C4;}
+.service-card{background:var(--white);padding:1.6rem 1.4rem;cursor:pointer;transition:background .2s;position:relative;-webkit-user-select:none;user-select:none;}
+.service-card:active{background:var(--surface);}
+.service-card.selected{background:var(--ink);}
+.service-card.selected .sc-name,.service-card.selected .sc-price{color:var(--gold);}
+.service-card.selected .sc-desc,.service-card.selected .sc-duration{color:#6A6058;}
+.sc-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.4rem;}
+.sc-desc{color:var(--muted);font-size:.78rem;line-height:1.5;margin-bottom:.9rem;}
+.sc-price{font-size:1.05rem;font-weight:500;color:var(--gold-dark);}
+.sc-duration{font-size:.71rem;color:var(--muted);margin-top:.15rem;}
+.check-mark{position:absolute;top:.8rem;right:.8rem;width:20px;height:20px;background:var(--gold);border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--ink);font-size:10px;font-weight:700;}
+.service-card.selected .check-mark{display:flex;}
+
+/* BOOKING */
+.booking-wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.cal-month{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;}
+.cal-nav{background:none;border:1px solid #D8D0C4;width:36px;height:36px;cursor:pointer;font-size:1.2rem;color:var(--ink-soft);transition:all .2s;line-height:1;border-radius:0;}
+.cal-nav:hover{background:var(--ink);color:var(--gold);border-color:var(--ink);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day-name{text-align:center;font-size:.65rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;padding:3px 0 7px;}
+.cal-day{text-align:center;padding:10px 2px;font-size:.83rem;cursor:pointer;border-radius:2px;transition:all .15s;border:1px solid transparent;min-height:38px;display:flex;align-items:center;justify-content:center;}
+.cal-day:active:not(.empty):not(.past):not(.closed){background:var(--surface);}
+.cal-day.selected{background:var(--ink);color:var(--gold);}
+.cal-day.today{border-color:var(--gold);}
+.cal-day.past,.cal-day.closed{color:#C8C2B8;cursor:not-allowed;}
+.cal-day.closed{text-decoration:line-through;}
+.cal-day.empty{cursor:default;}
+.time-slots{margin-top:1.5rem;}
+.time-slots h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.8rem;}
+.slots-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.slot{padding:.6rem .3rem;text-align:center;font-size:.8rem;border:1px solid #D8D0C4;cursor:pointer;background:var(--white);transition:all .15s;color:var(--ink);border-radius:0;}
+.slot:active:not(.booked){border-color:var(--gold);background:var(--surface);}
+.slot.selected{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:500;}
+.slot.booked{background:var(--surface);color:#C8C2B8;cursor:not-allowed;border-style:dashed;}
+
+/* FORM */
+.form-group{margin-bottom:1.1rem;}
+.form-group label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.4rem;}
+.form-group input,.form-group select{width:100%;padding:.8rem 1rem;border:1px solid #D8D0C4;background:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;color:var(--ink);outline:none;transition:border-color .2s;-webkit-appearance:none;border-radius:0;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.booking-summary{background:var(--ink);padding:1.4rem;margin-bottom:1.3rem;border-left:3px solid var(--gold);}
+.summary-title{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold);margin-bottom:.9rem;}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:.5rem;font-size:.83rem;}
+.summary-row .label{color:#A09890;}
+.summary-row .value{color:var(--white);}
+.summary-row.total{margin-top:.5rem;padding-top:.5rem;border-top:1px solid rgba(201,168,76,.2);}
+.summary-row.total .value{color:var(--gold);font-size:.95rem;font-weight:500;}
+
+/* REVIEWS */
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;}
+.review-card{background:var(--white);padding:1.4rem;border:1px solid #E8E0D4;}
+.review-stars{color:var(--gold);font-size:.88rem;letter-spacing:2px;margin-bottom:.8rem;}
+.review-text{font-size:.88rem;color:var(--ink-soft);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.review-author{display:flex;align-items:center;gap:.8rem;}
+.review-avatar{width:38px;height:38px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:600;color:var(--gold-dark);overflow:hidden;flex-shrink:0;}
+.review-avatar img{width:100%;height:100%;object-fit:cover;}
+.review-name{font-size:.86rem;font-weight:500;}
+.review-date{font-size:.72rem;color:var(--muted);margin-top:.1rem;}
+
+/* STAR PICKER */
+.star-picker{display:flex;gap:.2rem;margin-top:.4rem;}
+.star-opt{font-size:2rem;color:#D8D0C4;cursor:pointer;transition:color .12s;line-height:1;padding:.1rem;}
+.star-opt.active{color:var(--gold);}
+
+/* FOOTER */
+footer{background:var(--ink);padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;border-top:1px solid rgba(201,168,76,.1);}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--gold);}
+.footer-logo span{color:#A09890;font-weight:300;}
+.footer-copy{color:#4A443E;font-size:.72rem;}
+
+/* THANK YOU */
+.thankyou-wrap{background:var(--ink);min-height:80vh;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;}
+.thankyou-inner{text-align:center;max-width:480px;width:100%;}
+.thankyou-icon{font-size:2.5rem;margin-bottom:1.5rem;}
+.thankyou-inner h1{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--white);margin-bottom:.7rem;line-height:1.1;}
+.thankyou-inner h1 em{color:var(--gold);font-style:italic;}
+.thankyou-inner>p{color:#A09890;font-size:.9rem;line-height:1.8;}
+.thankyou-details{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.18);padding:1.4rem;margin:1.5rem 0;text-align:left;}
+.ty-row{display:flex;justify-content:space-between;margin-bottom:.55rem;font-size:.86rem;}
+.ty-row span:first-child{color:#A09890;}
+.ty-row span:last-child{color:var(--white);}
+.ty-divider{height:1px;background:rgba(201,168,76,.12);margin:.7rem 0;}
+.ty-row.ty-total span:last-child{color:var(--gold);font-weight:500;font-size:.95rem;}
+.thankyou-sub{color:#5E5850;font-size:.78rem;margin-bottom:1.8rem;line-height:1.6;}
+
+/* BANNER */
+.banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--gold);padding:.8rem 1.5rem;font-size:.88rem;font-family:'Cormorant Garamond',serif;letter-spacing:.04em;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;border-top:2px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,.35);max-width:90vw;text-align:center;}
+.banner.show{opacity:1;}
+
+/* DESKTOP overrides */
+@media(min-width:761px){
+  body{padding-bottom:0;}
+  .tab-bar{display:none !important;}
+  nav{padding:1.1rem 2.5rem;}
+  .nav-desktop{display:flex;}
+  .nav-book-btn{display:inline-block;}
+  .hero{padding:5rem 2.5rem 4.5rem;gap:3rem;}
+  .hero-text h1{font-size:4rem;}
+  .section{padding:4.5rem 2.5rem;}
+  .booking-wrap{grid-template-columns:1fr 1fr;gap:3.5rem;}
+  .services-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));}
+  footer{flex-direction:row;justify-content:space-between;padding:2.5rem;}
+  .banner{bottom:2rem;}
+  .cal-day:hover:not(.empty):not(.past):not(.closed){background:var(--surface);border-color:#D8D0C4;}
+  .slot:hover:not(.booked){border-color:var(--gold);background:var(--surface);}
+}
+
+/* MOBILE */
+@media(max-width:760px){
+  .nav-desktop{display:none;}
+  .nav-book-btn{display:none;}
+  .tab-bar{display:block;}
+  .hero{grid-template-columns:1fr;padding:3rem 1.5rem 2.5rem;gap:1.5rem;}
+  .hero-text h1{font-size:2.6rem;}
+  .rating-box{padding:1.8rem 1.5rem;}
+  .rating-num{font-size:3.5rem;}
+  .booking-wrap{grid-template-columns:1fr;gap:2rem;}
+  .reviews-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#" onclick="showPage('home');return false;">Sliced<span>ByLev</span></a>
+  <ul class="nav-desktop">
+    <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+    <li><a href="#" class="nav-link" data-page="book">Book</a></li>
+    <li><a href="#" class="nav-link" data-page="reviews">Reviews</a></li>
+  </ul>
+  <button class="nav-book-btn nav-link" data-page="book">Book Now</button>
+</nav>
+
+<!-- MOBILE TAB BAR -->
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-item active" data-page="home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="tab-item" data-page="book">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Book
+    </button>
+    <button class="tab-item" data-page="reviews">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+    </button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Luxury cuts.<br><em>Real prices.</em></h1>
+      <p>Premium barbering without the premium price tag. Walk out looking like a million — starting from $20.</p>
+      <button class="btn-primary" onclick="showPage('book')">Book your chair →</button>
+    </div>
+    <div class="rating-box">
+      <div class="rating-num" id="heroRatingNum">—</div>
+      <div class="rating-stars" id="heroRatingStars">☆☆☆☆☆</div>
+      <div class="rating-label">Average Rating</div>
+      <div class="rating-count" id="heroRatingCount">No reviews yet</div>
+    </div>
+  </div>
+
+  <div class="section" style="background:var(--white);">
+    <div class="gold-line"></div>
+    <div class="section-title">Our Services</div>
+    <div class="section-sub">Tap a service to select it, then head to Book to lock in your time.</div>
+    <div class="services-grid" id="servicesGrid"></div>
+  </div>
+
+  <div class="section">
+    <div class="gold-line"></div>
+    <div class="section-title">What clients say</div>
+    <div class="section-sub">Real reviews from real clients</div>
+    <div class="reviews-grid" id="homeReviews"></div>
+    <div style="margin-top:1.8rem;">
+      <button class="btn-primary" onclick="showPage('reviews')">See all reviews →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK -->
+<div class="page" id="page-book">
+  <div class="section">
+    <div class="gold-line"></div>
+    <div class="section-title">Book Your Appointment</div>
+    <div class="section-sub">Choose a service, pick a date and time, then enter your details below.</div>
+    <div class="booking-wrap">
+      <div>
+        <div class="cal-header">
+          <button class="cal-nav" id="prevMonth">‹</button>
+          <div class="cal-month" id="calMonth"></div>
+          <button class="cal-nav" id="nextMonth">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="time-slots">
+          <h4>Available Times</h4>
+          <div class="slots-grid" id="slotsGrid">
+            <div style="color:var(--muted);font-size:.83rem;grid-column:1/-1;padding:.4rem 0;">Select a date to see available slots</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="booking-summary" id="bookingSummary" style="display:none;">
+          <div class="summary-title">Booking Summary</div>
+          <div class="summary-row"><span class="label">Service</span><span class="value" id="sum-service">—</span></div>
+          <div class="summary-row"><span class="label">Date</span><span class="value" id="sum-date">—</span></div>
+          <div class="summary-row"><span class="label">Time</span><span class="value" id="sum-time">—</span></div>
+          <div class="summary-row total"><span class="label" style="color:#A09890;">Total</span><span class="value" id="sum-price">—</span></div>
+        </div>
+        <div class="form-group">
+          <label>Service</label>
+          <select id="serviceSelect"><option value="">— Select a service —</option></select>
+        </div>
+        <div class="form-group"><label>Full Name</label><input type="text" id="clientName" placeholder="e.g. Marcus Johnson" autocomplete="name"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="clientEmail" placeholder="your@email.com" autocomplete="email" inputmode="email"></div>
+        <div class="form-group">
+          <label>Phone <span style="font-size:.68rem;text-transform:none;letter-spacing:0;font-weight:400;">(optional)</span></label>
+          <input type="tel" id="clientPhone" placeholder="+1 (555) 000-0000" autocomplete="tel" inputmode="tel">
+        </div>
+        <button class="btn-primary" id="confirmBook" style="width:100%;padding:1rem;font-size:.88rem;">Confirm Booking →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="page" id="page-reviews">
+  <div class="section">
+    <div class="gold-line"></div>
+    <div class="section-title">Client Reviews</div>
+    <div class="section-sub">Real experiences from SlicedByLev clients</div>
+    <div class="reviews-grid" id="allReviews"></div>
+  </div>
+
+  <div class="section" style="background:var(--white);border-top:1px solid #E8E0D4;">
+    <div class="gold-line"></div>
+    <div class="section-title">Leave a Review</div>
+    <div class="section-sub">Had a great experience? We'd love to hear from you.</div>
+    <div style="max-width:520px;">
+      <div id="reviewFormWrap">
+        <div class="form-group"><label>Your Name</label><input type="text" id="crvName" placeholder="e.g. Marcus Johnson" autocomplete="name"></div>
+        <div class="form-group">
+          <label>Your Rating</label>
+          <div class="star-picker">
+            <span class="star-opt" data-val="1">★</span>
+            <span class="star-opt" data-val="2">★</span>
+            <span class="star-opt" data-val="3">★</span>
+            <span class="star-opt" data-val="4">★</span>
+            <span class="star-opt" data-val="5">★</span>
+          </div>
+          <div id="starLabel" style="font-size:.74rem;color:var(--muted);margin-top:.45rem;">Tap to select your rating</div>
+        </div>
+        <div class="form-group">
+          <label>Your Review</label>
+          <textarea id="crvText" placeholder="Tell us about your experience..." style="width:100%;padding:.8rem 1rem;border:1px solid #D8D0C4;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--ink);outline:none;border-radius:0;resize:vertical;min-height:100px;transition:border-color .2s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='#D8D0C4'"></textarea>
+        </div>
+        <button class="btn-primary" id="submitReviewBtn" style="width:100%;">Submit Review →</button>
+        <p style="font-size:.71rem;color:var(--muted);margin-top:.8rem;line-height:1.6;">Reviews are approved before going live — usually within 24 hours.</p>
+      </div>
+      <div id="reviewThanks" style="display:none;background:var(--ink);padding:2.2rem;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:.9rem;">🙏</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);margin-bottom:.4rem;">Thanks for the feedback!</div>
+        <div style="color:#A09890;font-size:.86rem;line-height:1.7;">Your review has been submitted and will appear once approved.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THANK YOU -->
+<div class="page" id="page-thankyou">
+  <div class="thankyou-wrap">
+    <div class="thankyou-inner">
+      <div class="thankyou-icon">✂️</div>
+      <h1>Thank you,<br><em id="thankYouName">friend</em>.</h1>
+      <p>Your appointment is confirmed. We'll see you soon.</p>
+      <div class="thankyou-details">
+        <div class="ty-row"><span>Service</span><span id="ty-service">—</span></div>
+        <div class="ty-row"><span>Date</span><span id="ty-date">—</span></div>
+        <div class="ty-row"><span>Time</span><span id="ty-time">—</span></div>
+        <div class="ty-divider"></div>
+        <div class="ty-row ty-total"><span>Total</span><span id="ty-price">—</span></div>
+      </div>
+      <p class="thankyou-sub">We'll have the chair ready — walk in with confidence. ✂️</p>
+      <button class="btn-primary" onclick="showPage('home')">← Back to home</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Sliced<span>ByLev</span></div>
+  <div class="footer-copy">© 2025 SlicedByLev. All rights reserved.</div>
+</footer>
+
+<div class="banner" id="banner"></div>
+
+<script>
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function defSvcs(){return[
+  {id:1,name:'Signature Cut',price:35,duration:45,desc:'Precision fade, detailed line-up, and hot towel finish.'},
+  {id:2,name:'Shape Up',price:25,duration:30,desc:'Clean edges and crisp lines to refresh your look.'},
+  {id:3,name:'Cut & Beard',price:55,duration:60,desc:'Full haircut plus beard sculpt and straight razor finish.'},
+  {id:4,name:'Kids Cut',price:20,duration:30,desc:'Patient, careful cuts for the little ones.'},
+];}
+function defHours(){return[
+  {day:'Monday',open:true,from:'09:00',to:'18:00'},
+  {day:'Tuesday',open:true,from:'09:00',to:'18:00'},
+  {day:'Wednesday',open:true,from:'09:00',to:'18:00'},
+  {day:'Thursday',open:true,from:'09:00',to:'19:00'},
+  {day:'Friday',open:true,from:'09:00',to:'19:00'},
+  {day:'Saturday',open:true,from:'10:00',to:'17:00'},
+  {day:'Sunday',open:false,from:'10:00',to:'15:00'},
+];}
+function defReviews(){return[
+  {id:1,name:'Marcus T.',text:'Lev is the real deal. Walked in with a mess, walked out looking fresh. The line-up alone is worth it.',stars:5,date:'May 2025',photo:null,approved:true},
+  {id:2,name:'Jordan K.',text:'Clean shop, clean cuts. Never had to wait long and the price is honestly too good.',stars:5,date:'Apr 2025',photo:null,approved:true},
+  {id:3,name:'Devon R.',text:'The Cut & Beard combo is my go-to. My girl noticed immediately — enough said.',stars:5,date:'Mar 2025',photo:null,approved:true},
+];}
+
+function gd(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
+function sd(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+let services=gd('slv_services',defSvcs());
+let hours=gd('slv_hours',defHours());
+let bookings=gd('slv_bookings',[]);
+let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+let selDate=null,selSlot=null,selSvc=null;
+
+// NAV — desktop links + mobile tab bar
+function setActiveNav(page){
+  document.querySelectorAll('.nav-link,.tab-item').forEach(el=>{
+    el.classList.toggle('active',(el.dataset.page||'')=== page);
+  });
+}
+document.querySelectorAll('.nav-link').forEach(el=>{
+  el.addEventListener('click',e=>{e.preventDefault();showPage(el.dataset.page);});
+});
+document.querySelectorAll('.tab-item').forEach(el=>{
+  el.addEventListener('click',()=>showPage(el.dataset.page));
+});
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  setActiveNav(name);
+  window.scrollTo({top:0,behavior:'instant'});
+  if(name==='book'){buildSvcSelect();renderCal();}
+  if(name==='home'||name==='reviews'){renderReviews();renderSvcs();}
+}
+
+// SERVICES
+function renderSvcs(){
+  services=gd('slv_services',defSvcs());
+  const g=document.getElementById('servicesGrid');
+  if(!g)return;
+  g.innerHTML=services.map(s=>`
+    <div class="service-card" onclick="pickSvc(this,${s.id})">
+      <div class="check-mark">✓</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-desc">${s.desc||''}</div>
+      <div class="sc-price">$${s.price}</div>
+      <div class="sc-duration">${s.duration} min</div>
+    </div>`).join('');
+  if(selSvc){
+    document.querySelectorAll('.service-card').forEach((c,i)=>{
+      if(services[i]&&services[i].id===selSvc.id)c.classList.add('selected');
+    });
+  }
+}
+window.pickSvc=function(card,id){
+  document.querySelectorAll('.service-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selSvc=services.find(s=>s.id===id);
+  const sel=document.getElementById('serviceSelect');
+  if(sel)sel.value=id;
+  if(selDate)renderSlots();
+  updateSummary();
+};
+
+function buildSvcSelect(){
+  services=gd('slv_services',defSvcs());
+  const sel=document.getElementById('serviceSelect');
+  const cur=selSvc?selSvc.id:'';
+  sel.innerHTML='<option value="">— Select a service —</option>'+
+    services.map(s=>`<option value="${s.id}">${s.name} — $${s.price} (${s.duration} min)</option>`).join('');
+  if(cur)sel.value=cur;
+  sel.onchange=function(){
+    selSvc=services.find(s=>s.id==this.value)||null;
+    if(selDate)renderSlots();
+    updateSummary();
+  };
+}
+
+function updateSummary(){
+  const box=document.getElementById('bookingSummary');
+  if(selSvc||selDate||selSlot){
+    box.style.display='block';
+    document.getElementById('sum-service').textContent=selSvc?selSvc.name:'—';
+    document.getElementById('sum-date').textContent=selDate?fmtDate(selDate):'—';
+    document.getElementById('sum-time').textContent=selSlot||'—';
+    document.getElementById('sum-price').textContent=selSvc?'$'+selSvc.price:'—';
+  }else{box.style.display='none';}
+}
+function fmtDate(d){return MONTHS[d.m]+' '+d.d+', '+d.y;}
+
+// CALENDAR
+function renderCal(){
+  hours=gd('slv_hours',defHours());
+  document.getElementById('calMonth').textContent=MONTHS[calMonth]+' '+calYear;
+  const g=document.getElementById('calGrid');g.innerHTML='';
+  DAYS.forEach(d=>{const e=document.createElement('div');e.className='cal-day-name';e.textContent=d;g.appendChild(e);});
+  const first=new Date(calYear,calMonth,1).getDay();
+  const total=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date();
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cal-day empty';g.appendChild(e);}
+  for(let d=1;d<=total;d++){
+    const e=document.createElement('div');e.className='cal-day';e.textContent=d;
+    const dt=new Date(calYear,calMonth,d);
+    const dn=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dt.getDay()];
+    const he=hours.find(h=>h.day===dn);
+    const isPast=dt<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    const isClosed=!he||!he.open;
+    if(isPast)e.classList.add('past');
+    else if(isClosed)e.classList.add('closed');
+    if(d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear())e.classList.add('today');
+    if(selDate&&selDate.d===d&&selDate.m===calMonth&&selDate.y===calYear)e.classList.add('selected');
+    if(!isPast&&!isClosed)e.addEventListener('click',()=>{selDate={d,m:calMonth,y:calYear,dn};selSlot=null;renderCal();renderSlots();updateSummary();});
+    g.appendChild(e);
+  }
+}
+document.getElementById('prevMonth').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();});
+document.getElementById('nextMonth').addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();});
+
+function toMins(s){
+  const m=s.match(/(\d+):(\d+)(am|pm)/i);if(!m)return-1;
+  let h=parseInt(m[1]),mn=parseInt(m[2]);
+  if(m[3]==='pm'&&h!==12)h+=12;if(m[3]==='am'&&h===12)h=0;
+  return h*60+mn;
+}
+function genSlots(fr,to){
+  const out=[];let[h,m]=fr.split(':').map(Number);const[eh,em]=to.split(':').map(Number);
+  while(h<eh||(h===eh&&m<em)){
+    const sf=h<12?'am':'pm';const dh=h>12?h-12:h===0?12:h;
+    out.push(dh+':'+String(m).padStart(2,'0')+sf);
+    m+=30;if(m>=60){m-=60;h++;}
+  }
+  return out;
+}
+function renderSlots(){
+  const g=document.getElementById('slotsGrid');
+  if(!selDate){g.innerHTML='<div style="color:var(--muted);font-size:.83rem;grid-column:1/-1;padding:.4rem 0;">Select a date first</div>';return;}
+  const he=hours.find(h=>h.day===selDate.dn);
+  if(!he||!he.open){g.innerHTML='<div style="color:var(--muted);font-size:.83rem;grid-column:1/-1;">Closed that day</div>';return;}
+  const slots=genSlots(he.from,he.to);
+  const dk=selDate.y+'-'+selDate.m+'-'+selDate.d;
+  bookings=gd('slv_bookings',[]);
+  const blocked=bookings.filter(b=>b.dateKey===dk).map(b=>({start:toMins(b.time),end:toMins(b.time)+(b.duration||30)}));
+  const dur=selSvc?selSvc.duration:30;
+  g.innerHTML='';
+  slots.forEach(slot=>{
+    const e=document.createElement('div');e.className='slot';e.textContent=slot;
+    const s=toMins(slot);
+    if(blocked.some(r=>s<r.end&&(s+dur)>r.start))e.classList.add('booked');
+    else if(selSlot===slot)e.classList.add('selected');
+    else e.addEventListener('click',()=>{selSlot=slot;renderSlots();updateSummary();});
+    g.appendChild(e);
+  });
+}
+
+// CONFIRM
+document.getElementById('confirmBook').addEventListener('click',()=>{
+  const name=document.getElementById('clientName').value.trim();
+  const email=document.getElementById('clientEmail').value.trim();
+  if(!selSvc){showBanner('Please select a service');return;}
+  if(!selDate){showBanner('Please select a date');return;}
+  if(!selSlot){showBanner('Please select a time slot');return;}
+  if(!name){showBanner('Please enter your name');return;}
+  if(!email||!email.includes('@')){showBanner('Please enter a valid email');return;}
+  bookings=gd('slv_bookings',[]);
+  const dk=selDate.y+'-'+selDate.m+'-'+selDate.d;
+  bookings.push({id:Date.now(),name,email,phone:document.getElementById('clientPhone').value.trim(),
+    service:selSvc.name,price:selSvc.price,duration:selSvc.duration,
+    dateKey:dk,dateLabel:fmtDate(selDate),time:selSlot,status:'confirmed',bookedAt:new Date().toISOString()});
+  sd('slv_bookings',bookings);
+  // EmailJS
+  const ejs=gd('slv_ejs',{});
+  if(ejs.publicKey&&ejs.serviceId&&ejs.templateId){
+    emailjs.init(ejs.publicKey);
+    emailjs.send(ejs.serviceId,ejs.templateId,{
+      client_name:name,client_email:email,
+      service:selSvc.name,date:fmtDate(selDate),
+      time:selSlot,price:'$'+selSvc.price,
+    }).catch(e=>console.warn('EmailJS:',e));
+  }
+  document.getElementById('thankYouName').textContent=name.split(' ')[0];
+  document.getElementById('ty-service').textContent=selSvc.name;
+  document.getElementById('ty-date').textContent=fmtDate(selDate);
+  document.getElementById('ty-time').textContent=selSlot;
+  document.getElementById('ty-price').textContent='$'+selSvc.price;
+  selDate=null;selSlot=null;selSvc=null;
+  ['clientName','clientEmail','clientPhone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('serviceSelect').value='';
+  document.getElementById('bookingSummary').style.display='none';
+  showPage('thankyou');
+});
+
+// REVIEWS
+function renderReviews(){
+  const reviews=gd('slv_reviews',defReviews());
+  const approved=reviews.filter(r=>r.approved);
+  const avg=approved.length?Math.round(approved.reduce((s,r)=>s+r.stars,0)/approved.length*10)/10:null;
+  if(avg!==null){
+    document.getElementById('heroRatingNum').textContent=avg.toFixed(1);
+    const f=Math.round(avg);
+    document.getElementById('heroRatingStars').textContent='★'.repeat(f)+'☆'.repeat(5-f);
+    document.getElementById('heroRatingCount').textContent='Based on '+approved.length+' review'+(approved.length===1?'':'s');
+  }else{
+    document.getElementById('heroRatingNum').textContent='—';
+    document.getElementById('heroRatingStars').textContent='☆☆☆☆☆';
+    document.getElementById('heroRatingCount').textContent='No reviews yet';
+  }
+  ['homeReviews','allReviews'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=approved.length?approved.map(r=>`
+      <div class="review-card">
+        <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+        <div class="review-text">"${r.text}"</div>
+        <div class="review-author">
+          <div class="review-avatar">${r.photo?`<img src="${r.photo}" alt="">`:(r.name||'?').substring(0,2).toUpperCase()}</div>
+          <div><div class="review-name">${r.name}</div><div class="review-date">${r.date||''}</div></div>
+        </div>
+      </div>`).join(''):'<p style="color:var(--muted);font-size:.88rem;">No reviews yet — be the first!</p>';
+  });
+}
+
+// REVIEW FORM
+let custStars=0;
+const starLabels=['','Poor','Fair','Good','Great','Excellent ✨'];
+document.querySelectorAll('.star-opt').forEach(s=>{
+  s.addEventListener('touchstart',e=>{e.preventDefault();pickStar(parseInt(s.dataset.val));},{passive:false});
+  s.addEventListener('click',()=>pickStar(parseInt(s.dataset.val)));
+  s.addEventListener('mouseover',()=>{
+    const v=parseInt(s.dataset.val);
+    document.querySelectorAll('.star-opt').forEach(x=>x.classList.toggle('active',parseInt(x.dataset.val)<=v));
+  });
+  s.addEventListener('mouseout',()=>{
+    document.querySelectorAll('.star-opt').forEach(x=>x.classList.toggle('active',parseInt(x.dataset.val)<=custStars));
+  });
+});
+function pickStar(v){
+  custStars=v;
+  document.querySelectorAll('.star-opt').forEach(x=>x.classList.toggle('active',parseInt(x.dataset.val)<=v));
+  document.getElementById('starLabel').textContent=starLabels[v];
+}
+document.getElementById('submitReviewBtn').addEventListener('click',()=>{
+  const name=document.getElementById('crvName').value.trim();
+  const text=document.getElementById('crvText').value.trim();
+  if(!name){showBanner('Please enter your name');return;}
+  if(!custStars){showBanner('Please tap a star rating');return;}
+  if(text.length<10){showBanner('Please write at least a sentence');return;}
+  const reviews=gd('slv_reviews',defReviews());
+  const now=new Date();
+  reviews.push({id:Date.now(),name,text,stars:custStars,date:MONTHS_SHORT[now.getMonth()]+' '+now.getFullYear(),photo:null,approved:false});
+  sd('slv_reviews',reviews);
+  document.getElementById('reviewFormWrap').style.display='none';
+  document.getElementById('reviewThanks').style.display='block';
+});
+
+function showBanner(msg){
+  const b=document.getElementById('banner');
+  b.textContent=msg;b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'),3200);
+}
+
+renderSvcs();renderReviews();
+</script>
+</body>
+</html>
